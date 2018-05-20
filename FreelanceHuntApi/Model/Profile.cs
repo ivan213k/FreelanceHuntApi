@@ -115,5 +115,9 @@ namespace FreelanceHuntApi.Model
         public string Icq { get; set; }
 
 
+        public static Profile FromJson()
+        {
+
+        }
     }
 }
