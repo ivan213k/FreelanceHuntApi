@@ -66,8 +66,7 @@ namespace FreelanceHuntAPI
         {
             var url = string.Format("https://api.freelancehunt.com/profiles/{0}", login);
             var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
-            
-
+            Profile result = Profile.FromJson(response);
             return result;
         }
 
