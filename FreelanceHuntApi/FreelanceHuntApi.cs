@@ -1,12 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FreelanceHuntApi.Model;
+using FreelanceHuntApi.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreelanceHuntApi
+namespace FreelanceHuntAPI
 {
-    public class FreelanceHuntApi
+    public class FreelancehuntApi
     {
+        private readonly string token;
+        private readonly string apiSecret;
+
+        public FreelancehuntApi(string token, string apiSecret)
+        {
+            this.token = token;
+            this.apiSecret = apiSecret;
+        }
+        #region WebService
+        private async Task<string> HttpClientCall(string url, string methodName, HttpMethod httpMethod, string requestString = default(string))
+        {
+            try
+            {
+                HttpResponseMessage response = await CreateResponse(url, methodName, httpMethod, requestString);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return string.Empty;
+                }
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                return responseAsString;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private async Task<HttpResponseMessage> CreateResponse(string url, string methodName, HttpMethod httpMethod, string requestString)
+        {
+            HttpClient httpClient = new HttpClient();
+            
+            var signature = HMACHashCreator.GetSHA256Key(url + methodName, apiSecret, requestString);
+            httpClient.DefaultRequestHeaders.Authorization = CreateBasicHeader(token, signature);
+            var request = new HttpRequestMessage(httpMethod, url);
+            if (httpMethod == HttpMethod.Post)
+            {
+                request.Content = new StringContent(requestString, Encoding.UTF8, "application/json");
+            }
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            return response;
+        }
+
+        private AuthenticationHeaderValue CreateBasicHeader(string username, string password)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(username + ":" + password);
+            var res = Convert.ToBase64String(byteArray);
+            return new AuthenticationHeaderValue("Basic", res);
+        }
+        #endregion
+
+        public async Task<Profile> GetAccountInfoAsync(string login = "me")
+        {
+            var url = string.Format("https://api.freelancehunt.com/profiles/{0}", login);
+            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+            
+
+            return result;
+        }
+
+
+
     }
 }
