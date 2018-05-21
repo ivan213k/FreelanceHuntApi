@@ -3,6 +3,8 @@ using FreelanceHuntApi.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -64,12 +66,31 @@ namespace FreelanceHuntAPI
 
         public async Task<Profile> GetAccountInfoAsync(string login = "me")
         {
-            var url = string.Format("https://api.freelancehunt.com/profiles/{0}", login);
+            var url = $"https://api.freelancehunt.com/profiles/{login}";
             var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
             Profile result = Profile.FromJson(response);
             return result;
         }
 
+        public async Task<List<Message>> GetNewMessagesAsync()
+        {
+            var url = "https://api.freelancehunt.com/threads?filter=new";
+            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            var listMessage = Message.ListMessageFromJson(response);
+
+            return listMessage;
+        }
+
+        public async Task<List<Message>> GetAllMessageAsync()
+        {
+            var url = "https://api.freelancehunt.com/threads";
+            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            var listMessage = Message.ListMessageFromJson(response);
+
+            return listMessage;
+        }
 
 
     }
