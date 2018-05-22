@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,15 @@ namespace FreelanceHuntApi.Model
 
 
         public string SkillName { get; set; }
+
+        //public Skill FromJson(string response)
+        //{
+        //    JObject jObject = JObject.Parse(response);
+        //    var listprop = jObject.Properties();
+        //    foreach (var item in listprop)
+        //    {
+        //        item.n
+        //    }
+        //}
     }
 }

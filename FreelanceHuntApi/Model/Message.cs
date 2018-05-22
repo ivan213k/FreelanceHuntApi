@@ -5,68 +5,55 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FreelanceHuntApi.Model
 {
     public class Message
     {
-        public string MessageId { get; set; }
-
-        public string Subject { get; set; }
-
         public string Url { get; set; }
-
-        public string UrlApi { get; set; }
 
         public From From { get; set; }
 
-        public string HasAttach { get; set; }
+        public From To { get; set; }
 
-        public DateTime LastPostTime { get; set; }
+        public string TextHTML { get; set; }
 
-        public DateTime FirstPostTime { get; set; }
-
-        public int MessageCount { get; set; }
-
-        public bool? IsUnread { get; set; }
-
-        public static Message MessageFromJson(string jsonResponse)
+        public string Text
         {
-            JObject item = JObject.Parse(jsonResponse);
+            get {return Regex.Replace(TextHTML, "<[^>]+>", string.Empty); } 
+           
+        }
+        public DateTime? PostTime { get; set; }
+
+        private static Message FromJson(string response)
+        {
+            JObject item = JObject.Parse(response);
             return new Message
             {
-                MessageId =     item["thread_id"].ToObject<string>(),
-                Subject =       item["subject"].ToObject<string>(),
-                Url =           item["url"].ToObject<string>(),
-                UrlApi =        item["url_api"].ToObject<string>(),
-                HasAttach =     item["has_attach"].ToObject<string>(),
-                LastPostTime =  item["last_post_time"].ToObject<DateTime>(),
-                FirstPostTime = item["first_post_time"].ToObject<DateTime>(),
-                /**/
-                MessageCount =  item["message_count"].ToObject<int>(),
-                IsUnread =      item["is_unread"].ToObject<bool?>(),
-
-                From = Model.From.FromJson(item["from"].ToString())
+                Url = item["url"].ToObject<string>(),
+                From = Model.From.FromJson(item["from"].ToString()),
+                To = Model.From.FromJson(item["to"].ToString()),
+                TextHTML = item["message_html"].ToObject<string>(),
+                PostTime = item["post_time"].ToObject<DateTime?>()
             };
-
-
         }
 
-        public static List<Message> ListMessageFromJson(string jsonResponse)
+        public static List<Message> MessageListFromJson(string json)
         {
             var messageList = new List<Message>();
 
-            JsonReader jsonReader = new JsonTextReader(new StringReader(jsonResponse));
+            JsonReader jsonReader = new JsonTextReader(new StringReader(json));
 
             JToken jToken = JObject.ReadFrom(jsonReader);
-            var jlist = jToken.Children();
 
-            foreach (var item in jlist)
+            foreach (var item in jToken.Children())
             {
-                messageList.Add(Message.MessageFromJson(item.ToString()));
+                messageList.Add(Message.FromJson(item.ToString()));
             }
-            return messageList;
+
+            return messageList;  
         }
     }
 }

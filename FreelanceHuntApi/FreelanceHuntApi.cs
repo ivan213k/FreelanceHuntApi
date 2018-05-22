@@ -68,29 +68,34 @@ namespace FreelanceHuntAPI
         {
             var url = $"https://api.freelancehunt.com/profiles/{login}";
             var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
-            Profile result = Profile.FromJson(response);
-            return result;
+            return Profile.FromJson(response);
+           
         }
 
-        public async Task<List<Message>> GetNewMessagesAsync()
+        public async Task<List<Correspondence>> GetNewCorrespondenceAsync()
         {
             var url = "https://api.freelancehunt.com/threads?filter=new";
             var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
 
-            var listMessage = Message.ListMessageFromJson(response);
-
-            return listMessage;
+            return Correspondence.ListCorrespondenceFromJson(response); 
         }
 
-        public async Task<List<Message>> GetAllMessageAsync()
+        public async Task<List<Correspondence>> GetAllCorrespondenceAsync()
         {
             var url = "https://api.freelancehunt.com/threads";
             var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
 
-            var listMessage = Message.ListMessageFromJson(response);
-
-            return listMessage;
+           return Correspondence.ListCorrespondenceFromJson(response);   
         }
+
+        public async Task<List<Message>> GetMessageListAsync(string correspondenceId)
+        {
+            var url = $"https://api.freelancehunt.com/threads/{correspondenceId}";
+            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            return Message.MessageListFromJson(response);
+        } 
+
 
 
     }
