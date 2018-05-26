@@ -7,21 +7,40 @@ using System.Threading.Tasks;
 
 namespace FreelanceHuntApi.Model
 {
-    class Skill
+    public class Skill
     {
-        public int SkillId { get; set; }
+        public Skill(int skillId, string skillName)
+        {
+            SkillId = skillId;
+            SkillName = skillName;
+        }
+
+        public int SkillId { get; private set; }
 
 
-        public string SkillName { get; set; }
+        public string SkillName { get; private set; }
 
-        //public Skill FromJson(string response)
-        //{
-        //    JObject jObject = JObject.Parse(response);
-        //    var listprop = jObject.Properties();
-        //    foreach (var item in listprop)
-        //    {
-        //        item.n
-        //    }
-        //}
+
+        public static List<string> SkillsFromJson(string response)
+        {
+            JObject jObject = JObject.Parse(response);
+            var skills = new List<string>();
+            foreach (var skill in jObject)
+            {
+                skills.Add(skill.Value.ToObject<string>());
+            }
+            return skills;
+        }
+
+        public static List<string> SkillsFromJarray(string response)
+        {
+            JArray jArray = JArray.Parse(response);
+            var skills = new List<string>();
+            foreach (var skill in jArray)
+            {
+                skills.Add(skill.ToObject<string>());
+            }
+            return skills;
+        }
     }
 }

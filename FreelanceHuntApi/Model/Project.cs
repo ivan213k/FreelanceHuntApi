@@ -1,13 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FreelanceHuntApi.Model
 {
-    class Project
+    public class Project
     {
         public int ProjectId { get; private set; }
 
@@ -35,38 +37,44 @@ namespace FreelanceHuntApi.Model
 
         public DateTime ExpireTime { get; private set; }
 
-        public bool IsJob { get; private set; }
+        public List<string> Skills { get; private set; }
 
-        public bool IsFeatured { get; private set; }
 
-        public bool IsIdentityVerified { get; private set; }
-
-        public Skill[] Skills { get; private set; }
-
-        public Project FromJson(string response)
+        private static Project FromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             return new Project
             {
-                ProjectId = jObject["project_id"].ToObject<int>(),
-                Url = jObject["url"].ToObject<string>(),
-                UrlApi = jObject["url_api"].ToObject<string>(),
+                ProjectId =       jObject["project_id"].ToObject<int>(),
+                Url =             jObject["url"].ToObject<string>(),
+                UrlApi =          jObject["url_api"].ToObject<string>(),
                 From = Model.From.FromJson(jObject["from"].ToString()),
-                Name = jObject["name"].ToObject<string>(),
-                Description = jObject["description"].ToObject<string>(),
+                Name =            jObject["name"].ToObject<string>(),
+                Description =     jObject["description"].ToObject<string>(),
                 DescriptionHTML = jObject["description_html"].ToObject<string>(),
-                StatusId = jObject["status_id"].ToObject<int>(),
-                StatusName = jObject["status_name"].ToObject<string>(),
-                BidCount = jObject["bid_count"].ToObject<int>(),
-                HasPlacedBid = jObject["has_placed_bid"].ToObject<int>(),
+                StatusId =        jObject["status_id"].ToObject<int>(),
+                StatusName =      jObject["status_name"].ToObject<string>(),
+                BidCount =        jObject["bid_count"].ToObject<int>(),
+                HasPlacedBid =    jObject["has_placed_bid"].ToObject<int>(),
                 PublicationTime = jObject["publication_time"].ToObject<DateTime>(),
-                ExpireTime = jObject["expire_time"].ToObject<DateTime>(),
-                IsJob = jObject["is_job"].ToObject<bool>(),
-                IsFeatured = jObject["is_featured"].ToObject<bool>(),
-                IsIdentityVerified = jObject["is_identity_verified"].ToObject<bool>(),
-                
-
+                ExpireTime =      jObject["expire_time"].ToObject<DateTime>(),
+                Skills = Skill.SkillsFromJarray(jObject["skills"].ToString())
             };
+        }
+
+        public static List<Project> ProjectsFromJson(string response)
+        {
+            var projectList = new List<Project>();
+
+            JsonReader jsonReader = new JsonTextReader(new StringReader(response));
+
+            JToken jToken = JObject.ReadFrom(jsonReader);
+
+            foreach (var item in jToken.Children())
+            {
+                projectList.Add(Project.FromJson(item.ToString()));
+            }
+            return projectList;
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FreelanceHuntApi.Enums
 {
-    enum Skills
+    public enum Skills
     {
-        Net = 61,
+        DotNet = 61,
         _1C= 56,
         AJAX = 70,
         Android = 121,

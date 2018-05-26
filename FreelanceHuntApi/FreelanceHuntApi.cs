@@ -1,4 +1,5 @@
-﻿using FreelanceHuntApi.Model;
+﻿using FreelanceHuntApi.Enums;
+using FreelanceHuntApi.Model;
 using FreelanceHuntApi.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,89 +15,117 @@ namespace FreelanceHuntAPI
 {
     public class FreelancehuntApi
     {
-        private readonly string token;
-        private readonly string apiSecret;
-
+        WebService webService;
         public FreelancehuntApi(string token, string apiSecret)
         {
-            this.token = token;
-            this.apiSecret = apiSecret;
+            webService = new WebService(token, apiSecret);
         }
-        #region WebService
-        private async Task<string> HttpClientCall(string url, string methodName, HttpMethod httpMethod, string requestString = default(string))
-        {
-            try
-            {
-                HttpResponseMessage response = await CreateResponse(url, methodName, httpMethod, requestString);
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return string.Empty;
-                }
-                string responseAsString = await response.Content.ReadAsStringAsync();
-                return responseAsString;
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        private async Task<HttpResponseMessage> CreateResponse(string url, string methodName, HttpMethod httpMethod, string requestString)
-        {
-            HttpClient httpClient = new HttpClient();
-            
-            var signature = HMACHashCreator.GetSHA256Key(url + methodName, apiSecret, requestString);
-            httpClient.DefaultRequestHeaders.Authorization = CreateBasicHeader(token, signature);
-            var request = new HttpRequestMessage(httpMethod, url);
-            if (httpMethod == HttpMethod.Post)
-            {
-                request.Content = new StringContent(requestString, Encoding.UTF8, "application/json");
-            }
-            HttpResponseMessage response = await httpClient.SendAsync(request);
-            return response;
-        }
-
-        private AuthenticationHeaderValue CreateBasicHeader(string username, string password)
-        {
-            byte[] byteArray = Encoding.UTF8.GetBytes(username + ":" + password);
-            var res = Convert.ToBase64String(byteArray);
-            return new AuthenticationHeaderValue("Basic", res);
-        }
-        #endregion
 
         public async Task<Profile> GetAccountInfoAsync(string login = "me")
         {
-            var url = $"https://api.freelancehunt.com/profiles/{login}";
-            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
-            return Profile.FromJson(response);
-           
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}", "GET", HttpMethod.Get);
+            return Profile.FromJson(response);  
         }
 
         public async Task<List<Correspondence>> GetNewCorrespondenceAsync()
         {
-            var url = "https://api.freelancehunt.com/threads?filter=new";
-            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+            var response = await webService.HttpClientCall("https://api.freelancehunt.com/threads?filter=new", "GET", HttpMethod.Get);
 
             return Correspondence.ListCorrespondenceFromJson(response); 
         }
 
         public async Task<List<Correspondence>> GetAllCorrespondenceAsync()
         {
-            var url = "https://api.freelancehunt.com/threads";
-            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+            var response = await webService.HttpClientCall("https://api.freelancehunt.com/threads", "GET", HttpMethod.Get);
 
            return Correspondence.ListCorrespondenceFromJson(response);   
         }
 
         public async Task<List<Message>> GetMessageListAsync(string correspondenceId)
         {
-            var url = $"https://api.freelancehunt.com/threads/{correspondenceId}";
-            var response = await this.HttpClientCall(url, "GET", HttpMethod.Get);
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/threads/{correspondenceId}", "GET", HttpMethod.Get);
 
             return Message.MessageListFromJson(response);
         } 
 
+        public async Task<List<Project>> GetProjectsAsync()
+        {
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects", "GET", HttpMethod.Get);
 
+            return Project.ProjectsFromJson(response);
+        }
+
+        public async Task<List<Project>> GetProjectsAsync(int page,int countProjects=20)
+        {
+          var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}", "GET", HttpMethod.Get);
+
+          return Project.ProjectsFromJson(response); 
+        }
+
+        public async Task<List<Project>> GetProjectsAsync(params Skills[] skills)
+        {
+            var url = "https://api.freelancehunt.com/projects?skills=";
+
+            foreach (var skill in skills)
+            {
+                url += $"{(int)skill},";
+            }
+            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            return Project.ProjectsFromJson(response);
+        }
+
+        public async Task<List<Project>> GetProjectsAsync(int page, int countProjects =20, params Skills[] skills)
+        {
+            var url = $"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}&skills=";
+
+            foreach (var skill in skills)
+            {
+                url += $"{(int)skill},";
+            }
+            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            return Project.ProjectsFromJson(response);
+        }
+
+        public async Task<List<Project>> GetProjectsAsync(params string[] tags)
+        {
+            var url = "https://api.freelancehunt.com/projects?tags=";
+
+            foreach (var tag in tags)
+            {
+                url += $"{tag},";
+            }
+            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            return Project.ProjectsFromJson(response);
+        }
+
+        public async Task<List<Project>> GetProjectsAsync(int page, int countProjects = 20, params string[] tags)
+        {
+            var url = $"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}&tags=";
+
+            foreach (var tag in tags)
+            {
+                url += $"{tag},";
+            }
+            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+
+            return Project.ProjectsFromJson(response);
+        }
+
+        public async Task<ProjectDetail> GetProjectDetailsAsync(int projectId)
+        {
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects/{projectId}", "GET", HttpMethod.Get);
+
+            return ProjectDetail.ProjectDetailsFromJson(response);
+        }
+
+        public async Task<List<Bid>> GetBidsOnProject(int projectId)
+        {
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects/{projectId}/bids", "GET", HttpMethod.Get);
+            return Bid.BidsFromJson(response);
+        }
 
     }
 }

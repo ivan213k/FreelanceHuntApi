@@ -31,7 +31,6 @@ namespace FreelanceHuntApi.Model
             return new From
             {
                 Avatar = jObject["avatar"].ToObject<string>(),
-                AvatarMd = jObject["avatar_md"].ToObject<string>(),
                 Login = jObject["login"].ToObject<string>(),
                 FirstName = jObject["fname"].ToObject<string>(),
                 Surname = jObject["sname"].ToObject<string>(),
