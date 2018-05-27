@@ -37,7 +37,7 @@ namespace FreelanceHuntApi.Model
             };
         }
 
-        public static List<Message> MessageListFromJson(string json)
+        internal static List<Message> MessageListFromJson(string json)
         {
             var messageList = new List<Message>();
 

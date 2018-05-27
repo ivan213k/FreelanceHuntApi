@@ -64,7 +64,7 @@ namespace FreelanceHuntApi.Model
 
         public string Website { get; private set; }
 
-        public static Portfolio FromJson(string response)
+        internal static Portfolio FromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             return new Portfolio

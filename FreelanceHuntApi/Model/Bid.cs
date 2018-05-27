@@ -48,7 +48,7 @@ namespace FreelanceHuntApi.Model
             return bid; 
         }
 
-        public static List<Bid> BidsFromJson(string response)
+        internal static List<Bid> BidsFromJson(string response)
         {
             var jArray = JArray.Parse(response);
             List<Bid> bids = new List<Bid>();

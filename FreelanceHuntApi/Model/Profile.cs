@@ -6,120 +6,121 @@ namespace FreelanceHuntApi.Model
     public class Profile
     {
 
-        public string ProfileId { get; set; }
+        public string ProfileId { get; private set; }
 
 
-        public string UrlAdress { get; set; }
+        public string UrlAdress { get; private set; }
 
 
-        public string UrlForPrivateMessage { get; set; }
+        public string UrlForPrivateMessage { get; private set; }
 
 
-        public string Avatar { get; set; }
+        public string Avatar { get; private set; }
 
 
-        public bool IsFreelancer { get; set; }
+        public bool IsFreelancer { get; private set; }
 
 
-        public bool IsEmployer { get; set; }
+        public bool IsEmployer { get; private set; }
 
 
-        public string Login { get; set; }
+        public string Login { get; private set; }
 
 
-        public string FirstName { get; set; }
+        public string FirstName { get; private set; }
 
 
-        public string Surname { get; set; }
+        public string Surname { get; private set; }
 
 
-        public DateTime? BirthDate { get; set; }
+        public DateTime? BirthDate { get; private set; }
 
 
-        public string Rating { get; set; }
+        public string Rating { get; private set; }
 
 
-        public string RatingPosition { get; set; }
+        public string RatingPosition { get; private set; }
 
 
-        public string CountryName_ru { get; set; }
+        public string CountryName_ru { get; private set; }
 
 
-        public string CityName_ru { get; set; }
+        public string CityName_ru { get; private set; }
 
 
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; private set; }
 
 
-        public string PositiveReviews { get; set; }
+        public string PositiveReviews { get; private set; }
 
 
-        public string NegativeReviews { get; set; }
+        public string NegativeReviews { get; private set; }
 
 
-        public string IsPhoneVerified { get; set; }
+        public string IsPhoneVerified { get; private set; }
 
 
-        public string IsFirstNameVerified { get; set; }
+        public string IsFirstNameVerified { get; private set; }
 
 
-        public string IsBirthDateVerified { get; set; }
+        public string IsBirthDateVerified { get; private set; }
 
 
-        public string IsWmidVerified { get; set; }
+        public string IsWmidVerified { get; private set; }
 
 
-        public string IsOkpayVerified { get; set; }
+        public string IsOkpayVerified { get; private set; }
 
 
-        public string IsEmailVerified { get; set; }
+        public string IsEmailVerified { get; private set; }
 
         
-        public bool IsOnline { get; set; }
+        public bool IsOnline { get; private set; }
 
 
-        public DateTime LastActivity { get; set; }
+        public DateTime LastActivity { get; private set; }
 
 
-        public string Website { get; set; }
+        public string Website { get; private set; }
 
 
-        public string StatusName { get; set; }
+        public string StatusName { get; private set; }
 
 
-        public string SkillName { get; set; }
+        public string SkillName { get; private set; }
 
 
-        public string SkillAltName { get; set; }
+        public string SkillAltName { get; private set; }
 
 
-        public string RatingPositionCategory { get; set; }
+        public string RatingPositionCategory { get; private set; }
 
 
-        public string RatingPositionCategoryAlt { get; set; }
+        public string RatingPositionCategoryAlt { get; private set; }
 
 
-        public string Email { get; set; }
+        public string Email { get; private set; }
 
 
-        public string Phone { get; set; }
+        public string Phone { get; private set; }
 
 
-        public string Skype { get; set; }
+        public string Skype { get; private set; }
 
 
-        public string Wmid { get; set; }
+        public string Wmid { get; private set; }
 
 
-        public string YandexMoney { get; set; }
+        public string YandexMoney { get; private set; }
 
 
-        public string Resume { get; set; }
+        public string Resume { get; private set; }
 
-        public string ResumeHtml { get; set; }
+
+        public string ResumeHtml { get; private set; }
 
         
-        public static Profile FromJson(string jsonResponse)
+        internal static Profile FromJson(string jsonResponse)
         {
             JObject jObject = JObject.Parse(jsonResponse);
             return new Profile

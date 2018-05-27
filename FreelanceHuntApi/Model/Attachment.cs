@@ -30,7 +30,7 @@ namespace FreelanceHuntApi.Model
             };
         }
 
-        public static List<Attachment> AttachmentsFromJson(string response)
+        internal static List<Attachment> AttachmentsFromJson(string response)
         {
             if (response == null) return new List<Attachment>();
             var attachmentList = new List<Attachment>();

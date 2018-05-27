@@ -37,7 +37,7 @@ namespace FreelanceHuntApi.Model
         public List<string> Skills { get; private set; }
 
 
-        public static Project FromJson(string response)
+        internal static Project FromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             return new Project
@@ -59,7 +59,7 @@ namespace FreelanceHuntApi.Model
             };
         }
 
-        public static List<Project> ProjectsFromJson(string response)
+        internal static List<Project> ProjectsFromJson(string response)
         {
             var projectList = new List<Project>();
 

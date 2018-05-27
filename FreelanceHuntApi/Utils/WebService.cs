@@ -17,7 +17,7 @@ namespace FreelanceHuntApi.Utils
             this.apiSecret = apiSecret;
         }
 
-        public  async Task<string> HttpClientCall(string url, string methodName, HttpMethod httpMethod, string requestString = default(string))
+        internal  async Task<string> HttpClientCall(string url, string methodName, HttpMethod httpMethod, string requestString = default(string))
         {
             try
             {

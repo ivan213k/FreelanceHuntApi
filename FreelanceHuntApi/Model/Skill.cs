@@ -17,7 +17,7 @@ namespace FreelanceHuntApi.Model
         public string SkillName { get; private set; }
 
 
-        public static List<string> SkillsFromJson(string response)
+        internal static List<string> SkillsFromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             var skills = new List<string>();
@@ -28,7 +28,7 @@ namespace FreelanceHuntApi.Model
             return skills;
         }
 
-        public static List<string> SkillsFromJarray(string response)
+        internal static List<string> SkillsFromJarray(string response)
         {
             JArray jArray = JArray.Parse(response);
             var skills = new List<string>();

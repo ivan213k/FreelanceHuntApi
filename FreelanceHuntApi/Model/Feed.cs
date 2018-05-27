@@ -51,7 +51,7 @@ namespace FreelanceHuntApi.Model
             };
         }
 
-        public static List<Feed> FeedsFromJson(string response)
+        internal static List<Feed> FeedsFromJson(string response)
         {
             JArray jArray = JArray.Parse(response);
             var feeds = new List<Feed>();

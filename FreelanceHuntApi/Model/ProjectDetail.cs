@@ -52,7 +52,7 @@ namespace FreelanceHuntApi.Model
             return tags;
         }
 
-        public static ProjectDetail ProjectDetailsFromJson(string response)
+        internal static ProjectDetail ProjectDetailsFromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             return new ProjectDetail

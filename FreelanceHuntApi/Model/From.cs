@@ -5,21 +5,21 @@ namespace FreelanceHuntApi.Model
     public class From
     {
       
-        public string Avatar { get; set; }
+        public string Avatar { get; private set; }
 
-        public string AvatarMd { get; set; }
+        public string AvatarMd { get; private set; }
 
-        public string Login { get; set; }
+        public string Login { get; private set; }
 
-        public string FirstName { get; set; }
+        public string FirstName { get; private set; }
 
-        public string Surname { get; set; }
+        public string Surname { get; private set; }
 
-        public string ProfileId { get; set; }
+        public string ProfileId { get; private set; }
 
-        public string Url { get; set; }
+        public string Url { get; private set; }
 
-        public static From FromJson(string jsonResponse)
+        internal static From FromJson(string jsonResponse)
         {
             JObject jObject = JObject.Parse(jsonResponse);
             return new From

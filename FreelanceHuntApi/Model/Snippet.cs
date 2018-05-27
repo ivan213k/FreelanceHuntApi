@@ -50,7 +50,7 @@ namespace FreelanceHuntApi.Model
             };
         }
 
-        public static List<Snippet> SnippetsFromJson(string response)
+        internal static List<Snippet> SnippetsFromJson(string response)
         {
             JArray jArray = JArray.Parse(response);
             var snippets = new List<Snippet>();

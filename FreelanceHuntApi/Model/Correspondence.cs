@@ -8,27 +8,27 @@ namespace FreelanceHuntApi.Model
 {
     public class Correspondence
     {
-        public string MessageId { get; set; }
+        public string MessageId { get; private set; }
 
-        public string Subject { get; set; }
+        public string Subject { get; private set; }
 
-        public string Url { get; set; }
+        public string Url { get; private set; }
 
-        public string UrlApi { get; set; }
+        public string UrlApi { get; private set; }
 
-        public From From { get; set; }
+        public From From { get; private set; }
 
-        public string HasAttach { get; set; }
+        public string HasAttach { get; private set; }
 
-        public DateTime LastPostTime { get; set; }
+        public DateTime LastPostTime { get; private set; }
 
-        public DateTime FirstPostTime { get; set; }
+        public DateTime FirstPostTime { get; private set; }
 
-        public int MessageCount { get; set; }
+        public int MessageCount { get; private set; }
 
-        public bool? IsUnread { get; set; }
+        public bool? IsUnread { get; private set; }
 
-        public static Correspondence CorrespondenceFromJson(string jsonResponse)
+        internal static Correspondence CorrespondenceFromJson(string jsonResponse)
         {
             JObject item = JObject.Parse(jsonResponse);
             return new Correspondence
@@ -49,7 +49,7 @@ namespace FreelanceHuntApi.Model
 
         }
 
-        public static List<Correspondence> ListCorrespondenceFromJson(string jsonResponse)
+        internal static List<Correspondence> ListCorrespondenceFromJson(string jsonResponse)
         {
             var сorrespondenceList = new List<Correspondence>();
 

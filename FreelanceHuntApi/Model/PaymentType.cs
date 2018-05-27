@@ -16,7 +16,7 @@ namespace FreelanceHuntApi.Model
             Id = id;
         }
 
-        public static List<PaymentType> FromJson(string response)
+        internal static List<PaymentType> FromJson(string response)
         {
             if (response == null) return new List<PaymentType>();
             
