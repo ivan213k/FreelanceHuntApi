@@ -1,14 +1,8 @@
 ﻿using FreelanceHuntApi.Enums;
 using FreelanceHuntApi.Model;
 using FreelanceHuntApi.Utils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FreelanceHuntAPI
@@ -16,6 +10,7 @@ namespace FreelanceHuntAPI
     public class FreelancehuntApi
     {
         WebService webService;
+
         public FreelancehuntApi(string token, string apiSecret)
         {
             webService = new WebService(token, apiSecret);
@@ -121,10 +116,31 @@ namespace FreelanceHuntAPI
             return ProjectDetail.ProjectDetailsFromJson(response);
         }
 
-        public async Task<List<Bid>> GetBidsOnProject(int projectId)
+        public async Task<List<Bid>> GetBidsOnProjectAsync(int projectId)
         {
             var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects/{projectId}/bids", "GET", HttpMethod.Get);
             return Bid.BidsFromJson(response);
+        }
+
+        public async Task<Portfolio> GetPortfolioAsync(string login)
+        {
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}?include=portfolio", "GET", HttpMethod.Get);
+            return Portfolio.FromJson(response);
+    
+        }
+
+        public async Task<List<Feed>> GetFeedsAsync()
+        {
+            var response = await webService.HttpClientCall("https://api.freelancehunt.com/my/feed", "GET", HttpMethod.Get);
+
+            return Feed.FeedsFromJson(response);
+        }
+
+        public async Task<List<Review>> GetReviewsAboutUserAsync(string login)
+        {
+            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}?include=reviews", "GET", HttpMethod.Get);
+
+            return Review.ReviewsFromJson(response);
         }
 
     }

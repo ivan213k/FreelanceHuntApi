@@ -1,6 +1,8 @@
 ﻿using FreelanceHuntApi.Enums;
+using FreelanceHuntApi.Model;
 using FreelanceHuntAPI;
 using System;
+using System.Collections.Generic;
 
 namespace Test
 {
@@ -10,17 +12,13 @@ namespace Test
         {
             FreelancehuntApi freelancehuntApi = new FreelancehuntApi("ivan213k", "9963e3dbaf46afe16e919797826db26dfc657439");
 
-            var projects = freelancehuntApi.GetProjectsAsync(2, 50).Result;
-            foreach (var item in projects)
+            List<Review> list = freelancehuntApi.GetReviewsAboutUserAsync("own_owl").Result;
+
+            foreach (var item in list)
             {
-                var liist = freelancehuntApi.GetBidsOnProject(item.ProjectId).Result;
-                foreach (var item1 in liist)
-                {
-                    Console.WriteLine(item1.IsHidden);
-                }
+                Console.WriteLine(item.GradeAverage);
             }
-            
-           
+
             Console.ReadKey(); 
         }
     }

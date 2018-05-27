@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 
 namespace FreelanceHuntApi.Model
 {
@@ -30,12 +24,12 @@ namespace FreelanceHuntApi.Model
             JObject jObject = JObject.Parse(jsonResponse);
             return new From
             {
-                Avatar = jObject["avatar"].ToObject<string>(),
-                Login = jObject["login"].ToObject<string>(),
-                FirstName = jObject["fname"].ToObject<string>(),
-                Surname = jObject["sname"].ToObject<string>(),
+                Avatar =    jObject["avatar"].ToObject<string>(),
+                Login =     jObject["login"].ToObject<string>(),
+                FirstName = jObject["fname"]?.ToObject<string>(),
+                Surname =   jObject["sname"]?.ToObject<string>(),
                 ProfileId = jObject["profile_id"].ToObject<string>(),
-                Url = jObject["url"].ToObject<string>()
+                Url =       jObject["url"].ToObject<string>()
             };
         }
     }

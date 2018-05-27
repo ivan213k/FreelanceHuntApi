@@ -3,9 +3,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FreelanceHuntApi.Model
 {
@@ -25,22 +22,22 @@ namespace FreelanceHuntApi.Model
 
         public string DescriptionHTML { get; private set; }
 
-        public int  StatusId { get; private set; }
+        public int?  StatusId { get; private set; }
 
         public string StatusName { get; private set; }
 
-        public int BidCount { get; private set; }
+        public int? BidCount { get; private set; }
 
-        public int  HasPlacedBid { get; private set; }
+        public int?  HasPlacedBid { get; private set; }
 
-        public DateTime PublicationTime { get; private set; }
+        public DateTime? PublicationTime { get; private set; }
 
-        public DateTime ExpireTime { get; private set; }
+        public DateTime? ExpireTime { get; private set; }
 
         public List<string> Skills { get; private set; }
 
 
-        private static Project FromJson(string response)
+        public static Project FromJson(string response)
         {
             JObject jObject = JObject.Parse(response);
             return new Project
@@ -48,17 +45,17 @@ namespace FreelanceHuntApi.Model
                 ProjectId =       jObject["project_id"].ToObject<int>(),
                 Url =             jObject["url"].ToObject<string>(),
                 UrlApi =          jObject["url_api"].ToObject<string>(),
-                From = Model.From.FromJson(jObject["from"].ToString()),
-                Name =            jObject["name"].ToObject<string>(),
-                Description =     jObject["description"].ToObject<string>(),
-                DescriptionHTML = jObject["description_html"].ToObject<string>(),
-                StatusId =        jObject["status_id"].ToObject<int>(),
-                StatusName =      jObject["status_name"].ToObject<string>(),
-                BidCount =        jObject["bid_count"].ToObject<int>(),
-                HasPlacedBid =    jObject["has_placed_bid"].ToObject<int>(),
-                PublicationTime = jObject["publication_time"].ToObject<DateTime>(),
-                ExpireTime =      jObject["expire_time"].ToObject<DateTime>(),
-                Skills = Skill.SkillsFromJarray(jObject["skills"].ToString())
+                From =            jObject["from"] != null ? Model.From.FromJson(jObject["from"].ToString()) : null,
+                Name =            jObject["name"]?.ToObject<string>(),
+                Description =     jObject["description"]?.ToObject<string>(),
+                DescriptionHTML = jObject["description_html"]?.ToObject<string>(),
+                StatusId =        jObject["status_id"]?.ToObject<int?>(),
+                StatusName =      jObject["status_name"]?.ToObject<string>(),
+                BidCount =        jObject["bid_count"]?.ToObject<int>(),
+                HasPlacedBid =    jObject["has_placed_bid"]?.ToObject<int>(),
+                PublicationTime = jObject["publication_time"]?.ToObject<DateTime>(),
+                ExpireTime =      jObject["expire_time"]?.ToObject<DateTime>(),
+                Skills =          jObject["skills"] != null ?  Skill.SkillsFromJarray(jObject["skills"].ToString()) : null,
             };
         }
 
