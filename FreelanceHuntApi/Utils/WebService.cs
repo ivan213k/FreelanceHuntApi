@@ -35,7 +35,7 @@ namespace FreelanceHuntApi.Utils
             }
         }
 
-        private  async Task<HttpResponseMessage> CreateResponse(string url, string methodName, HttpMethod httpMethod, string requestString)
+        internal async Task<HttpResponseMessage> CreateResponse(string url, string methodName, HttpMethod httpMethod, string requestString)
         {
             HttpClient httpClient = new HttpClient();
 

@@ -1,6 +1,9 @@
 ﻿using FreelanceHuntApi.Enums;
+using FreelanceHuntApi.Exeption;
 using FreelanceHuntApi.Model;
 using FreelanceHuntApi.Utils;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,8 +32,20 @@ namespace FreelanceHuntAPI
         /// <returns>Информация о пользователе</returns>
         public async Task<Profile> GetAccountInfoAsync(string login = "me")
         {
-            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}", "GET", HttpMethod.Get);
-            return Profile.FromJson(response);  
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/profiles/{login}", "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                switch ((int)response.StatusCode)
+                {
+                    case 404: throw new InvalidParameterException("Пользователя с таким логином не найдено", 404, nameof(login));
+                    default: throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+                }
+               
+            }
+
+            return Profile.FromJson(responseAsString);  
         }
 
         /// <summary>
@@ -52,9 +67,15 @@ namespace FreelanceHuntAPI
         /// <returns>Cписок переписок</returns>
         public async Task<List<Correspondence>> GetCorrespondenceAsync(int page, int countCorrespondence=10)
         {
-            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/threads?page={page}&per_page={countCorrespondence}", "GET", HttpMethod.Get);
+            if (page < 0) throw new InvalidParameterException("индекс страницы не может быть отрицательным");
+            if (countCorrespondence > 50) throw new InvalidParameterException("Параметр countCorrespondence должен быть меньше 50");
 
-           return Correspondence.ListCorrespondenceFromJson(response);   
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/threads?page={page}&per_page={countCorrespondence}", "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Correspondence.ListCorrespondenceFromJson(responseAsString);   
         }
 
         /// <summary>
@@ -64,9 +85,11 @@ namespace FreelanceHuntAPI
         /// <returns>Список сообщений в переписке</returns>
         public async Task<List<Message>> GetMessageListAsync(string correspondenceId)
         {
-            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/threads/{correspondenceId}", "GET", HttpMethod.Get);
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/threads/{correspondenceId}", "GET", HttpMethod.Get, default(string));
+            var responseAsString = await response.Content.ReadAsStringAsync();
+            if (JArray.Parse(responseAsString).Count == 0) throw new InvalidParameterException("некорректный идентификатор переписки");
 
-            return Message.MessageListFromJson(response);
+            return Message.MessageListFromJson(response.ToString());
         }
 
         /// <summary>
@@ -88,9 +111,15 @@ namespace FreelanceHuntAPI
         /// <returns>Список открытых проектов</returns>
         public async Task<List<Project>> GetProjectsAsync(int page,int countProjects=20)
         {
-          var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}", "GET", HttpMethod.Get);
+            if (page < 0) throw new InvalidParameterException("индекс страницы не может быть отрицательным");
+            if (countProjects > 50) throw new InvalidParameterException("Параметр countCorrespondence должен быть меньше 50");
 
-          return Project.ProjectsFromJson(response); 
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}", "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Project.ProjectsFromJson(responseAsString); 
         }
 
         /// <summary>
@@ -106,9 +135,12 @@ namespace FreelanceHuntAPI
             {
                 url += $"{(int)skill},";
             }
-            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+            var response = await webService.CreateResponse(url, "GET", HttpMethod.Get,default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
 
-            return Project.ProjectsFromJson(response);
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Project.ProjectsFromJson(responseAsString);
         }
 
         /// <summary>
@@ -120,15 +152,21 @@ namespace FreelanceHuntAPI
         /// <returns>Список открытых проектов</returns>
         public async Task<List<Project>> GetProjectsAsync(int page, int countProjects =20, params Skills[] skills)
         {
+            if (page < 0) throw new InvalidParameterException("индекс страницы не может быть отрицательным");
+            if (countProjects > 50) throw new InvalidParameterException("Параметр countCorrespondence должен быть меньше 50");
+
             var url = $"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}&skills=";
 
             foreach (var skill in skills)
             {
                 url += $"{(int)skill},";
             }
-            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
+            var response = await webService.CreateResponse(url, "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
 
-            return Project.ProjectsFromJson(response);
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Project.ProjectsFromJson(responseAsString);
         }
 
         /// <summary>
@@ -144,9 +182,13 @@ namespace FreelanceHuntAPI
             {
                 url += $"{tag},";
             }
-            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
 
-            return Project.ProjectsFromJson(response);
+            var response = await webService.CreateResponse(url, "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Project.ProjectsFromJson(responseAsString);
         }
 
         /// <summary>
@@ -158,15 +200,22 @@ namespace FreelanceHuntAPI
         /// <returns>Список открытых проектов</returns>
         public async Task<List<Project>> GetProjectsAsync(int page, int countProjects = 20, params string[] tags)
         {
+            if (page < 0) throw new InvalidParameterException("индекс страницы не может быть отрицательным");
+            if (countProjects > 50) throw new InvalidParameterException("Параметр countCorrespondence должен быть меньше 50");
+
             var url = $"https://api.freelancehunt.com/projects?page={page}&per_page={countProjects}&tags=";
 
             foreach (var tag in tags)
             {
                 url += $"{tag},";
             }
-            var response = await webService.HttpClientCall(url, "GET", HttpMethod.Get);
 
-            return Project.ProjectsFromJson(response);
+            var response = await webService.CreateResponse(url, "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode) throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+
+            return Project.ProjectsFromJson(responseAsString);
         }
 
         /// <summary>
@@ -177,6 +226,8 @@ namespace FreelanceHuntAPI
         public async Task<ProjectDetail> GetProjectDetailsAsync(int projectId)
         {
             var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects/{projectId}", "GET", HttpMethod.Get);
+
+            if (JArray.Parse(response).Count == 0) throw new InvalidParameterException("некорректный идентификатор проекта");
 
             return ProjectDetail.ProjectDetailsFromJson(response);
         }
@@ -189,6 +240,7 @@ namespace FreelanceHuntAPI
         public async Task<List<Bid>> GetBidsOnProjectAsync(int projectId)
         {
             var response = await webService.HttpClientCall($"https://api.freelancehunt.com/projects/{projectId}/bids", "GET", HttpMethod.Get);
+            if (JArray.Parse(response).Count == 0) throw new InvalidParameterException("некорректный идентификатор проекта");
             return Bid.BidsFromJson(response);
         }
 
@@ -199,9 +251,19 @@ namespace FreelanceHuntAPI
         /// <returns>Портфолио фрилансера</returns>
         public async Task<Portfolio> GetPortfolioAsync(string login)
         {
-            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}?include=portfolio", "GET", HttpMethod.Get);
-            return Portfolio.FromJson(response);
-    
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/profiles/{login}?include=portfolio", "GET", HttpMethod.Get, default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                switch ((int)response.StatusCode)
+                {
+                    case 404: throw new InvalidParameterException("Профиль с таким логином не найдено", 404, nameof(login));
+                    default: throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+                }
+
+            }
+            return Portfolio.FromJson(responseAsString);
         }
 
         /// <summary>
@@ -222,9 +284,20 @@ namespace FreelanceHuntAPI
         /// <returns>Отзывы о пользователе</returns>
         public async Task<List<Review>> GetReviewsAboutUserAsync(string login)
         {
-            var response = await webService.HttpClientCall($"https://api.freelancehunt.com/profiles/{login}?include=reviews", "GET", HttpMethod.Get);
+            var response = await webService.CreateResponse($"https://api.freelancehunt.com/profiles/{login}?include=reviews", "GET", HttpMethod.Get,default(string));
+            string responseAsString = await response.Content.ReadAsStringAsync();
 
-            return Review.ReviewsFromJson(response);
+            if (!response.IsSuccessStatusCode)
+            {
+                switch ((int)response.StatusCode)
+                {
+                    case 404: throw new InvalidParameterException("Профиль с таким логином не найдено", 404, nameof(login));
+                    default: throw new FreelanceHuntApiExeption(JObject.Parse(responseAsString));
+                }
+
+            }
+
+            return Review.ReviewsFromJson(responseAsString);
         }
 
     }

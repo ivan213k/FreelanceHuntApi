@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\Skills.cs" />
+    <Compile Include="Exeption\FreelanceHuntApiExeption.cs" />
+    <Compile Include="Exeption\InvalidParameterException.cs" />
     <Compile Include="FreelancehuntApi.cs" />
     <Compile Include="Model\Attachment.cs" />
     <Compile Include="Model\Bid.cs" />
