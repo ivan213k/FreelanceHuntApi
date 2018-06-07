@@ -3,14 +3,18 @@ using FreelanceHuntApi.Exeption;
 using FreelanceHuntApi.Model;
 using FreelanceHuntApi.Utils;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FreelanceHuntAPI
 {
-    public class FreelancehuntApi
+    /// <summary>
+    /// Предоставляет программный доступ к функциям сервиса, 
+    /// таким как лента новостей, личные сообщения, 
+    /// список проектов, информация о пользователях и т. П
+    /// </summary>
+    public class FlHuntApi
     {
         WebService webService;
 
@@ -20,7 +24,7 @@ namespace FreelanceHuntAPI
         /// </summary>
         /// <param name="token">Ваш идентификатор или логин</param>
         /// <param name="apiSecret">Ваш секретный ключ</param>
-        public FreelancehuntApi(string token, string apiSecret)
+        public FlHuntApi(string token, string apiSecret)
         {
             webService = new WebService(token, apiSecret);
         }
